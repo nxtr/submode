@@ -470,7 +470,8 @@ This is used by `submode--pre-command'.")
                   (submode-main-mode-indent submode--main-mode)))
         (indent-line (if submode--main-mode-indent-line-function
                          submode--main-mode-indent-line-function
-                       indent-line-function)))
+                       indent-line-function))
+        (inhibit-modification-hooks t))
     (cond (calc-indent (save-excursion
                          (funcall calc-indent)))
           (indent (+ (current-column) indent))
