@@ -266,7 +266,12 @@ and will capture essential functions and variables."
     ;; For compat, make sure this buffer is main-mode.
     (setq submode-compat--buffer-is-main-mode submode--main-mode)
     ;; Execute config body.
-    (funcall (submode--body-function (submode-main-mode-config main-mode)))))
+    (funcall (submode--body-function (submode-main-mode-config main-mode)))
+    ;; Make the syntax machinery discard all information.
+    (syntax-ppss-flush-cache -1)
+    ;; Re-fontify the buffer.
+    (save-excursion
+      (font-lock-fontify-region (point-min) (point-max)))))
 
 (defun submode--mark-buffer-locals (submode)
   (dolist (iter (submode-captured-locals submode))
