@@ -91,8 +91,9 @@
   config)
 
 (defconst submode--crucial-variable-prefix
-  '("comment-" "uncomment-" "electric-indent-" "smie-"
-    "forward-sexp-function" "completion-" "major-mode")
+  '("comment-" "uncomment-" "electric-indent-" "smie-" "forward-sexp-function"
+    "completion-" "major-mode" "adaptive-fill-" "fill-"
+    "normal-auto-fill-function" "paragraph-")
   "Regexp matching the prefix of \"crucial\" buffer-locals we want to capture.")
 
 (defconst submode--variable-prefix
@@ -390,24 +391,20 @@ This is used by `submode--pre-command'.")
 
 (defun submode--syntax-propertize (start end)
   (when submode--main-mode
-    ;; First remove our special settings from the affected text.
-    ;; They will be re-applied as needed.
-    (remove-list-of-text-properties
-     start end '(submode tag-start syntax-table local-map))
-    (goto-char start)
-    ;; Be sure to look back one character, because START won't yet have
-    ;; been propertized.
-    (unless (bobp)
-      (let ((submode (get-text-property (1- (point)) 'submode)))
-        (if submode
-            (submode-syntax-propertize
-             submode end (get-text-property (1- (point)) 'tag-start))
-          ;; No submode, so call the main-mode
-          ;; `pre-syntax-propertize'.
-          (let ((pre-syntax-propertize (submode-main-mode-pre-syntax-propertize
-                                        submode--main-mode)))
-            (when pre-syntax-propertize
-              (funcall pre-syntax-propertize start end))))))
+    (let ((submode (get-text-property start 'submode)))
+      ;; First remove our special settings from the affected text.
+      ;; They will be re-applied as needed.
+      (remove-list-of-text-properties
+       start end '(submode tag-start syntax-table local-map))
+      (goto-char start)
+      (if submode
+          (submode-syntax-propertize
+           submode end (get-text-property (1- (point)) 'tag-start))
+        ;; No submode, so call the main-mode `pre-syntax-propertize'.
+        (let ((pre-syntax-propertize (submode-main-mode-pre-syntax-propertize
+                                      submode--main-mode)))
+          (when pre-syntax-propertize
+            (funcall pre-syntax-propertize start end)))))
     (let ((case-fold-search (submode-main-mode-case-fold-search
                              submode--main-mode))
           ;; Make sure to handle the situation where
