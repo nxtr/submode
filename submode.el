@@ -254,8 +254,6 @@ and will capture essential functions and variables."
                  ,@newrules)))))
     ;; Capture font-lock-* variabels..
     (setq-local font-lock-fontify-region-function #'submode--fontify-region)
-    (setq-local font-lock-extend-region-functions
-                '(submode--extend-font-lock-region))
     ;; Attach this to both pre- and post- hooks just in case
     ;; it ever changes a key binding that might be accessed
     ;; from the menu bar.
@@ -305,49 +303,6 @@ and will capture essential functions and variables."
     (if submode
         (submode-name submode)
       nil)))
-
-(defvar font-lock-beg)
-(defvar font-lock-end)
-
-(defun submode--extend-font-lock-region ()
-  "Extend the font lock region according to submode needs.
-
-This is used via `font-lock-extend-region-functions'.  It ensures that the
-font-lock region is extended to cover either whole lines, or to the spot where
-the submode changes, whichever is smallest."
-  (let ((orig-beg font-lock-beg)
-        (orig-end font-lock-end))
-    ;; The logic here may look odd but it is needed to ensure that
-    ;; we do the right thing when trying to limit the search.
-    (save-excursion
-      (goto-char font-lock-beg)
-      ;; `previous-single-property-change' starts by looking
-      ;; at the previous character, but we're trying to extend
-      ;; a region to include just characters with the same
-      ;; submode as this character.
-      (unless (eobp)
-        (forward-char))
-      (setq font-lock-beg (previous-single-property-change
-                           (point) 'submode nil (line-beginning-position)))
-      (unless (eq (get-text-property font-lock-beg 'submode)
-                  (get-text-property orig-beg 'submode))
-        (cl-incf font-lock-beg))
-
-      (goto-char font-lock-end)
-      (unless (bobp)
-        (backward-char))
-      (setq font-lock-end (next-single-property-change
-                           (point) 'submode nil (line-beginning-position 2)))
-      (unless (eq (get-text-property font-lock-end 'submode)
-                  (get-text-property orig-end 'submode))
-        (cl-decf font-lock-end)))
-    ;; Also handle the multiline property -- but handle it here,
-    ;; and not via `font-lock-extend-region-functions', to avoid
-    ;; the situation where the two extension functions disagree.
-    ;; See bug#29159.
-    (font-lock-extend-region-multiline)
-    (or (/= font-lock-beg orig-beg)
-        (/= font-lock-end orig-end))))
 
 (defun submode--fontify-one-region (submode beg end &optional loudly)
   (if submode
