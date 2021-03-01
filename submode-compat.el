@@ -1,13 +1,13 @@
 ;;; submode-compat.el --- Compatibility with older GNU Emacs versions  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018 Magnus Nyberg
+;; Copyright (C) 2018-2021 Magnus Nyberg
 
 ;; Author: Magnus Nyberg <magnus@nexter.se>
 ;; Keywords: submode, compatibility
 ;; URL: https://github.com/nxtr/submode
 
 ;; This file contains code from GNU Emacs, which is
-;; Copyright (C) 2017-2018 Free Software Foundation, Inc.
+;; Copyright (C) 2017-2020 Free Software Foundation, Inc.
 
 ;; This file is not part of GNU Emacs.
 

@@ -1,13 +1,13 @@
 ;;; submode.el --- Manage multiple major modes as submodes  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018 Magnus Nyberg
+;; Copyright (C) 2018-2021 Magnus Nyberg
 
 ;; Author: Magnus Nyberg <magnus@nexter.se>
 ;; Keywords: utilities, convenience, faces, languages, tools
 ;; URL: https://github.com/nxtr/submode
 
 ;; This file contains code from GNU Emacs, which is
-;; Copyright (C) 2017-2018 Free Software Foundation, Inc.
+;; Copyright (C) 2017-2020 Free Software Foundation, Inc.
 
 ;; This file is not part of GNU Emacs.
 
